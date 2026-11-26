@@ -474,6 +474,113 @@ input[type="range"] {
   align-items: start;
 }
 
+.workspace-left-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.facility-pulse-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pulse-facility-row {
+  width: 100%;
+  appearance: none;
+  text-align: left;
+  font-family: var(--font-sans);
+  color: var(--ink);
+  background-color: var(--bg-inset);
+  border: 1.5px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  padding: 8px 10px;
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 54px minmax(110px, 1.1fr) minmax(90px, 1fr) 68px 74px;
+  align-items: center;
+  gap: 10px;
+  transition: transform 0.08s ease, background-color 0.12s ease;
+}
+
+.pulse-facility-row:hover {
+  background-color: #DCE5DD;
+}
+
+.pulse-facility-row.is-selected {
+  background-color: var(--bg-surface);
+  box-shadow: var(--shadow-offset);
+  border-width: 2px;
+}
+
+.pulse-code {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.pulse-name-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.pulse-name {
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pulse-sub {
+  font-size: 10.5px;
+  color: var(--ink-muted);
+}
+
+.pulse-bar-track {
+  height: 10px;
+  width: 100%;
+  background-color: var(--bg-surface);
+  border: 1.5px solid var(--border);
+  display: flex;
+  overflow: hidden;
+}
+
+.pulse-bar-exp {
+  background-color: var(--critical);
+  height: 100%;
+}
+
+.pulse-bar-safe {
+  background-color: var(--safe);
+  height: 100%;
+}
+
+.pulse-buffer {
+  font-size: 11.5px;
+  font-weight: 700;
+  text-align: right;
+}
+
+.corridor-highlight-strip {
+  margin-top: 10px;
+  padding: 8px 10px;
+  background-color: var(--bg-inset);
+  border: 1.5px solid var(--border);
+  font-size: 11px;
+  color: var(--ink-muted);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.corridor-highlight-strip strong {
+  color: var(--ink);
+}
+
 .legend-row {
   display: flex;
   align-items: center;
@@ -574,6 +681,45 @@ input[type="range"] {
   }
 }
 
+.dispatch-ambulance-bounce {
+  animation: dispatchAmbulanceBounce 0.36s ease-in-out infinite;
+}
+
+.dispatch-siren-red {
+  animation: dispatchSirenRed 0.48s steps(1, end) infinite;
+}
+
+.dispatch-siren-amber {
+  animation: dispatchSirenAmber 0.48s steps(1, end) infinite;
+}
+
+@keyframes dispatchAmbulanceBounce {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-1.5px);
+  }
+}
+
+@keyframes dispatchSirenRed {
+  0%, 49% {
+    fill: #B91C1C;
+  }
+  50%, 100% {
+    fill: #FEE2E2;
+  }
+}
+
+@keyframes dispatchSirenAmber {
+  0%, 49% {
+    fill: #FEF3C7;
+  }
+  50%, 100% {
+    fill: #D97706;
+  }
+}
+
 .transfer-banner {
   margin-top: 12px;
   padding: 10px 12px;
@@ -610,6 +756,66 @@ input[type="range"] {
   background-color: var(--bg-inset);
   padding: 10px;
   margin-bottom: 14px;
+}
+
+.stock-breakdown-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.mini-chart-card {
+  border: 1.5px solid var(--border);
+  background-color: var(--bg-inset);
+  box-shadow: var(--shadow-sm);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mini-chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.mini-chart-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+}
+
+.mini-chart-meta {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink-muted);
+}
+
+.mini-chart-canvas-wrap {
+  position: relative;
+  height: 155px;
+}
+
+.modal-breakdown-grid .mini-chart-canvas-wrap {
+  height: 185px;
+}
+
+.semi-gauge-readout {
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  text-align: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  pointer-events: none;
+  line-height: 1.1;
 }
 
 .inventory-matrix-wrap {
@@ -1158,6 +1364,9 @@ input[type="range"] {
   .critical-ring-pulse,
   .corridor-flow-edge,
   .transfer-pulse-line,
+  .dispatch-ambulance-bounce,
+  .dispatch-siren-red,
+  .dispatch-siren-amber,
   .focus-sheet {
     animation: none;
   }
@@ -1177,5 +1386,18 @@ input[type="range"] {
   }
   .stress-body {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 680px) {
+  .stock-breakdown-grid {
+    grid-template-columns: 1fr;
+  }
+  .pulse-facility-row {
+    grid-template-columns: 46px 1fr 64px;
+  }
+  .pulse-bar-track,
+  .pulse-buffer {
+    display: none;
   }
 }

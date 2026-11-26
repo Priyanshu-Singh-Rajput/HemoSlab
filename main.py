@@ -51,7 +51,18 @@ app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 
 @app.get("/", include_in_schema=False)
-def serve_index() -> FileResponse:
+def serve_landing() -> FileResponse:
+    landing_path = STATIC_DIR / "landing.html"
+    if landing_path.exists():
+        return FileResponse(str(landing_path))
+    index_path = STATIC_DIR / "index.html"
+    if not index_path.exists():
+        raise HTTPException(status_code=404, detail="Frontend index.html not found.")
+    return FileResponse(str(index_path))
+
+
+@app.get("/dashboard", include_in_schema=False)
+def serve_dashboard() -> FileResponse:
     index_path = STATIC_DIR / "index.html"
     if not index_path.exists():
         raise HTTPException(status_code=404, detail="Frontend index.html not found.")

@@ -43,9 +43,14 @@
     activeBriefing: null,
     auditData: null,
     chartInstance: null,
+    pieChartInstance: null,
+    semiChartInstance: null,
     modalChartInstance: null,
+    modalPieChartInstance: null,
+    modalSemiChartInstance: null,
     sliderTimer: null,
     pulseTimer: null,
+    pulseRafIds: [],
     modalOpen: false,
     modalTab: "topology",
     modalTimelineFilter: "all",
@@ -74,11 +79,19 @@
     svgTransferPulseLayer: document.getElementById("svgTransferPulseLayer"),
     svgNodesLayer: document.getElementById("svgNodesLayer"),
     transferBanner: document.getElementById("transferBanner"),
+    networkComponentTotals: document.getElementById("networkComponentTotals"),
+    facilityPulseList: document.getElementById("facilityPulseList"),
+    topCorridorStrip: document.getElementById("topCorridorStrip"),
 
     selectedHospitalTitle: document.getElementById("selectedHospitalTitle"),
     selectedHospitalMeta: document.getElementById("selectedHospitalMeta"),
     inventoryMatrixBody: document.getElementById("inventoryMatrixBody"),
     forecastChart: document.getElementById("forecastChart"),
+    hospitalBloodGroupChart: document.getElementById("hospitalBloodGroupChart"),
+    hospitalExpirySemiChart: document.getElementById("hospitalExpirySemiChart"),
+    bloodGroupPieTotal: document.getElementById("bloodGroupPieTotal"),
+    expiryGaugeBadge: document.getElementById("expiryGaugeBadge"),
+    expiryGaugeReadout: document.getElementById("expiryGaugeReadout"),
 
     recSummaryPill: document.getElementById("recSummaryPill"),
     timelineStrip: document.getElementById("timelineStrip"),
@@ -118,6 +131,11 @@
     modalForecastTitle: document.getElementById("modalForecastTitle"),
     modalForecastMeta: document.getElementById("modalForecastMeta"),
     modalChartCanvas: document.getElementById("modalChartCanvas"),
+    modalBloodGroupChart: document.getElementById("modalBloodGroupChart"),
+    modalExpirySemiChart: document.getElementById("modalExpirySemiChart"),
+    modalBloodGroupPieTotal: document.getElementById("modalBloodGroupPieTotal"),
+    modalExpiryGaugeBadge: document.getElementById("modalExpiryGaugeBadge"),
+    modalExpiryGaugeReadout: document.getElementById("modalExpiryGaugeReadout"),
     modalStockTable: document.getElementById("modalStockTable"),
     modalRecCount: document.getElementById("modalRecCount"),
     modalTimelinePrev: document.getElementById("modalTimelinePrev"),
@@ -222,6 +240,7 @@
     if (!state.network) return;
     renderHero();
     renderTopologyMap();
+    renderFacilityPulsePanel();
     renderSelectedHospitalPanel();
     renderTimeline72h();
     if (state.modalOpen) {
@@ -454,6 +473,7 @@
         evt.stopPropagation();
         state.selectedHospitalId = h.id;
         renderTopologyMap();
+        renderFacilityPulsePanel();
         renderSelectedHospitalPanel();
         if (state.modalOpen) {
           renderActiveModalView();
@@ -468,7 +488,94 @@
     renderTopologyInto(els.svgEdgesLayer, els.svgNodesLayer, false);
   }
 
-  function mountCourierPulse(layer, p1, p2) {
+  function renderFacilityPulsePanel() {
+    if (!state.network || !els.facilityPulseList) return;
+    const net = state.network;
+
+    const totals = { Platelets: 0, RBCs: 0, Plasma: 0 };
+    net.hospitals.forEach((h) => {
+      h.inventory.forEach((item) => {
+        if (Object.prototype.hasOwnProperty.call(totals, item.component)) {
+          totals[item.component] += item.total_units;
+        }
+      });
+    });
+
+    if (els.networkComponentTotals) {
+      els.networkComponentTotals.textContent = `PLT ${totals.Platelets}u · RBC ${totals.RBCs}u · PLS ${totals.Plasma}u`;
+    }
+
+    els.facilityPulseList.innerHTML = net.hospitals
+      .map((h) => {
+        const exp72 = h.inventory.reduce(
+          (sum, item) => sum + Math.min(item.total_units, item.expiring_within_72h),
+          0
+        );
+        const total = Math.max(1, h.total_units);
+        const expPct = Math.round((exp72 / total) * 100);
+        const safePct = Math.max(0, 100 - expPct);
+        const isSel = h.id === state.selectedHospitalId;
+        return `
+          <button type="button" class="pulse-facility-row ${isSel ? "is-selected" : ""}" data-pulse-hospital="${h.id}">
+            <span class="mono pulse-code">${h.code}</span>
+            <span class="pulse-name-col">
+              <span class="pulse-name">${h.name}</span>
+              <span class="mono pulse-sub">${h.total_units}u stock · ${exp72}u &le;72h</span>
+            </span>
+            <span class="pulse-bar-track" title="${exp72}u expiring <=72h / ${h.total_units}u total">
+              <span class="pulse-bar-exp" style="width:${expPct}%"></span>
+              <span class="pulse-bar-safe" style="width:${safePct}%"></span>
+            </span>
+            <span class="mono pulse-buffer">${formatHours(h.min_zero_stock_hours)}</span>
+            <span class="status-pill ${statusClass(h.status)}">${h.status}</span>
+          </button>
+        `;
+      })
+      .join("");
+
+    els.facilityPulseList.querySelectorAll("[data-pulse-hospital]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        state.selectedHospitalId = btn.getAttribute("data-pulse-hospital");
+        renderTopologyMap();
+        renderFacilityPulsePanel();
+        renderSelectedHospitalPanel();
+        if (state.modalOpen) {
+          renderActiveModalView();
+        }
+      });
+    });
+
+    if (els.topCorridorStrip) {
+      const topRec = net.recommendations[0];
+      if (topRec) {
+        const edge = net.edges.find(
+          (e) =>
+            (e.source_id === topRec.donor_hospital_id && e.target_id === topRec.receiver_hospital_id) ||
+            (e.source_id === topRec.receiver_hospital_id && e.target_id === topRec.donor_hospital_id)
+        );
+        const distLabel = edge ? ` · ${edge.distance_km} km` : "";
+        els.topCorridorStrip.innerHTML = `
+          <span><strong>TOP CORRIDOR:</strong> ${topRec.donor_code} &rarr; ${topRec.receiver_code} (${topRec.units}u ${topRec.donor_blood_group} ${topRec.component})</span>
+          <span>ETA ${topRec.transit_minutes}m${distLabel}</span>
+        `;
+      } else {
+        els.topCorridorStrip.innerHTML = `
+          <span><strong>CORRIDORS:</strong> All 6 facilities balanced</span>
+          <span>0 urgent transfers queued</span>
+        `;
+      }
+    }
+  }
+
+  function stopActiveCourierAnimations() {
+    if (Array.isArray(state.pulseRafIds)) {
+      state.pulseRafIds.forEach((id) => cancelAnimationFrame(id));
+    }
+    state.pulseRafIds = [];
+    clearTimeout(state.pulseTimer);
+  }
+
+  function mountCourierPulse(layer, p1, p2, meta = {}) {
     if (!layer) return;
     layer.innerHTML = "";
     const pulseLine = createSvgEl("line", {
@@ -478,78 +585,243 @@
       y2: p2.cy,
       class: "transfer-pulse-line",
     });
-
-    // Crisp geometric 10x10 solid #15803D courier marker with #1C1917 border & tiny white cross
-    const courier = createSvgEl("g", {});
-    courier.appendChild(
-      createSvgEl("rect", {
-        x: -6,
-        y: -6,
-        width: 12,
-        height: 12,
-        fill: PALETTE.safe,
-        stroke: PALETTE.ink,
-        "stroke-width": 1.5,
-      })
-    );
-    courier.appendChild(
-      createSvgEl("line", {
-        x1: -3,
-        y1: 0,
-        x2: 3,
-        y2: 0,
-        stroke: PALETTE.surface,
-        "stroke-width": 1.6,
-      })
-    );
-    courier.appendChild(
-      createSvgEl("line", {
-        x1: 0,
-        y1: -3,
-        x2: 0,
-        y2: 3,
-        stroke: PALETTE.surface,
-        "stroke-width": 1.6,
-      })
-    );
-
-    const anim = createSvgEl("animateMotion", {
-      dur: "1.4s",
-      repeatCount: "3",
-      path: `M ${p1.cx} ${p1.cy} L ${p2.cx} ${p2.cy}`,
-    });
-    courier.appendChild(anim);
     layer.appendChild(pulseLine);
+
+    // Moving courier group along donor -> receiver vector (driven by requestAnimationFrame)
+    const courier = createSvgEl("g", {
+      transform: `translate(${p1.cx}, ${p1.cy})`,
+    });
+
+    // Keep ambulance upright and facing direction of travel
+    const dx = p2.cx - p1.cx;
+    const dy = p2.cy - p1.cy;
+    const goingLeft = dx < 0;
+    const rawDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
+    const tiltDeg = goingLeft ? rawDeg - 180 : rawDeg;
+
+    const scaleFactor = meta.isZoomed ? 1.25 : 1.15;
+    const vehicleTilt = createSvgEl("g", {
+      transform: `rotate(${tiltDeg.toFixed(1)}) scale(${goingLeft ? -scaleFactor : scaleFactor}, ${scaleFactor})`,
+    });
+    const vehicleBody = createSvgEl("g", { class: "dispatch-ambulance-bounce" });
+
+    // Ground shadow
+    vehicleBody.appendChild(
+      createSvgEl("ellipse", {
+        cx: 0,
+        cy: 11,
+        rx: 20,
+        ry: 3,
+        fill: PALETTE.ink,
+        opacity: 0.35,
+      })
+    );
+
+    // Headlight cone
+    vehicleBody.appendChild(
+      createSvgEl("polygon", {
+        points: "20,2 36,-4 36,10",
+        fill: PALETTE.watchTint,
+        opacity: 0.85,
+      })
+    );
+
+    // Roof emergency lightbar
+    vehicleBody.appendChild(
+      createSvgEl("rect", {
+        x: 5,
+        y: -14,
+        width: 8,
+        height: 4,
+        fill: PALETTE.ink,
+      })
+    );
+    vehicleBody.appendChild(
+      createSvgEl("rect", {
+        x: 5.5,
+        y: -13.5,
+        width: 3.5,
+        height: 3,
+        fill: PALETTE.critical,
+        class: "dispatch-siren-red",
+      })
+    );
+    vehicleBody.appendChild(
+      createSvgEl("rect", {
+        x: 9,
+        y: -13.5,
+        width: 3.5,
+        height: 3,
+        fill: "#F59E0B",
+        class: "dispatch-siren-amber",
+      })
+    );
+
+    // Main tactile ambulance silhouette
+    vehicleBody.appendChild(
+      createSvgEl("path", {
+        d: "M -20,-10 L 6,-10 L 6,-6 L 14,-6 L 20,0 L 20,8 L -20,8 Z",
+        fill: PALETTE.surface,
+        stroke: PALETTE.ink,
+        "stroke-width": 1.8,
+      })
+    );
+
+    // Crimson cold-chain stripe
+    vehicleBody.appendChild(
+      createSvgEl("rect", {
+        x: -19,
+        y: 1,
+        width: 38,
+        height: 3,
+        fill: PALETTE.critical,
+      })
+    );
+
+    // Cab windshield
+    vehicleBody.appendChild(
+      createSvgEl("polygon", {
+        points: "8,-4 13,-4 17,0 8,0",
+        fill: PALETTE.gridLine,
+        stroke: PALETTE.ink,
+        "stroke-width": 1.1,
+      })
+    );
+
+    // Red medical cross
+    vehicleBody.appendChild(
+      createSvgEl("rect", {
+        x: -10,
+        y: -7.5,
+        width: 2.6,
+        height: 7,
+        fill: PALETTE.critical,
+      })
+    );
+    vehicleBody.appendChild(
+      createSvgEl("rect", {
+        x: -12.2,
+        y: -5.3,
+        width: 7,
+        height: 2.6,
+        fill: PALETTE.critical,
+      })
+    );
+
+    // Wheels
+    [-11, 11].forEach((wx) => {
+      vehicleBody.appendChild(
+        createSvgEl("circle", {
+          cx: wx,
+          cy: 8.5,
+          r: 4.2,
+          fill: PALETTE.ink,
+        })
+      );
+      vehicleBody.appendChild(
+        createSvgEl("circle", {
+          cx: wx,
+          cy: 8.5,
+          r: 1.7,
+          fill: PALETTE.inset,
+        })
+      );
+    });
+
+    vehicleTilt.appendChild(vehicleBody);
+    courier.appendChild(vehicleTilt);
+
+    // Upright cargo badge floating above the ambulance
+    const tagText = meta.label || "FEFO DISPATCH";
+    const badgeWidth = Math.max(78, tagText.length * 6.4 + 14);
+    const badge = createSvgEl("g", { transform: "translate(0, -28)" });
+    badge.appendChild(
+      createSvgEl("rect", {
+        x: -badgeWidth / 2,
+        y: -11,
+        width: badgeWidth,
+        height: 16,
+        fill: PALETTE.ink,
+      })
+    );
+    const labelEl = createSvgEl("text", {
+      x: 0,
+      y: 0,
+      "text-anchor": "middle",
+      "font-family": "JetBrains Mono, monospace",
+      "font-size": 9.5,
+      "font-weight": 700,
+      fill: PALETTE.safeTint,
+    });
+    labelEl.textContent = tagText;
+    badge.appendChild(labelEl);
+    courier.appendChild(badge);
     layer.appendChild(courier);
+
+    const tripMs = 1900;
+    const totalTrips = 3;
+    const startTs = performance.now();
+
+    function step(now) {
+      const elapsed = now - startTs;
+      if (elapsed >= tripMs * totalTrips || !courier.isConnected) {
+        return;
+      }
+      const progress = (elapsed % tripMs) / tripMs;
+      // Smooth ease-in-out cubic
+      const eased =
+        progress < 0.5
+          ? 4 * progress * progress * progress
+          : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+      const cx = p1.cx + dx * eased;
+      const cy = p1.cy + dy * eased;
+      courier.setAttribute("transform", `translate(${cx.toFixed(2)}, ${cy.toFixed(2)})`);
+      const rafId = requestAnimationFrame(step);
+      state.pulseRafIds.push(rafId);
+    }
+
+    const firstId = requestAnimationFrame(step);
+    state.pulseRafIds.push(firstId);
   }
 
-  function animateTransferPulse(donorId, receiverId) {
+  function animateTransferPulse(donorId, receiverId, meta = {}) {
     if (!state.network) return;
     const hospById = Object.fromEntries(state.network.hospitals.map((h) => [h.id, h]));
     const donor = hospById[donorId];
     const receiver = hospById[receiverId];
     if (!donor || !receiver) return;
 
+    stopActiveCourierAnimations();
+
+    const label =
+      meta.units && meta.bloodGroup
+        ? `${meta.units}u ${meta.bloodGroup} -> ${receiver.code}`
+        : `FEFO -> ${receiver.code}`;
+
     mountCourierPulse(
       els.svgTransferPulseLayer,
       mapCoord(donor.x, donor.y, false),
-      mapCoord(receiver.x, receiver.y, false)
+      mapCoord(receiver.x, receiver.y, false),
+      { label, isZoomed: false }
     );
     if (state.modalOpen && state.modalTab === "topology") {
       mountCourierPulse(
         els.modalSvgTransferPulseLayer,
         mapCoord(donor.x, donor.y, true),
-        mapCoord(receiver.x, receiver.y, true)
+        mapCoord(receiver.x, receiver.y, true),
+        { label, isZoomed: true }
       );
     }
 
-    clearTimeout(state.pulseTimer);
     state.pulseTimer = setTimeout(() => {
-      els.svgTransferPulseLayer.innerHTML = "";
+      stopActiveCourierAnimations();
+      if (els.svgTransferPulseLayer) {
+        els.svgTransferPulseLayer.innerHTML = "";
+      }
       if (els.modalSvgTransferPulseLayer) {
         els.modalSvgTransferPulseLayer.innerHTML = "";
       }
-    }, 4500);
+    }, 5900);
   }
 
   function buildForecastChart(canvasEl, forecastSeries) {
@@ -630,6 +902,122 @@
     });
   }
 
+  function buildBloodGroupPieChart(canvasEl, rows) {
+    if (!canvasEl || typeof window.Chart === "undefined") return null;
+    const labels = rows.map((r) => `${r.blood_group} (${r.total_units}u)`);
+    const values = rows.map((r) => Math.max(0, r.total_units));
+    const total = values.reduce((acc, v) => acc + v, 0);
+    const bgColors = rows.map((r) => {
+      if (r.status === "Critical") return PALETTE.criticalTint;
+      if (r.status === "Watch") return PALETTE.watchTint;
+      return PALETTE.safeTint;
+    });
+    const borderColors = rows.map((r) => {
+      if (r.status === "Critical") return PALETTE.critical;
+      if (r.status === "Watch") return PALETTE.watch;
+      return PALETTE.safe;
+    });
+
+    return new window.Chart(canvasEl.getContext("2d"), {
+      type: "pie",
+      data: {
+        labels: total > 0 ? labels : ["Empty Stock"],
+        datasets: [
+          {
+            data: total > 0 ? values : [1],
+            backgroundColor: total > 0 ? bgColors : [PALETTE.gridLine],
+            borderColor: total > 0 ? borderColors : [PALETTE.ink],
+            borderWidth: 1.5,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: { duration: 180 },
+        plugins: {
+          legend: {
+            position: "right",
+            labels: {
+              boxWidth: 10,
+              padding: 6,
+              color: PALETTE.ink,
+              font: { family: "JetBrains Mono, monospace", size: 10 },
+            },
+          },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => (total > 0 ? ` ${ctx.label}` : " 0 units on hand"),
+            },
+          },
+        },
+      },
+    });
+  }
+
+  function buildExpirySemiChart(canvasEl, rows) {
+    if (!canvasEl || typeof window.Chart === "undefined") return null;
+    let expiring72 = 0;
+    let watchUnits = 0;
+    let safeUnits = 0;
+
+    rows.forEach((r) => {
+      const exp = Math.min(r.total_units, Math.max(0, r.expiring_within_72h));
+      const rem = Math.max(0, r.total_units - exp);
+      expiring72 += exp;
+      if (r.status === "Watch" || r.status === "Critical") {
+        watchUnits += rem;
+      } else {
+        safeUnits += rem;
+      }
+    });
+
+    const total = expiring72 + watchUnits + safeUnits;
+
+    return new window.Chart(canvasEl.getContext("2d"), {
+      type: "doughnut",
+      data: {
+        labels:
+          total > 0
+            ? [`Exp ≤72h (${expiring72}u)`, `Watch >72h (${watchUnits}u)`, `Safe >72h (${safeUnits}u)`]
+            : ["No Stock"],
+        datasets: [
+          {
+            data: total > 0 ? [expiring72, watchUnits, safeUnits] : [1],
+            backgroundColor:
+              total > 0
+                ? [PALETTE.criticalTint, PALETTE.watchTint, PALETTE.safeTint]
+                : [PALETTE.gridLine],
+            borderColor:
+              total > 0
+                ? [PALETTE.critical, PALETTE.watch, PALETTE.safe]
+                : [PALETTE.ink],
+            borderWidth: 1.5,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        rotation: -90,
+        circumference: 180,
+        cutout: "62%",
+        animation: { duration: 180 },
+        plugins: {
+          legend: {
+            position: "top",
+            labels: {
+              boxWidth: 9,
+              padding: 6,
+              color: PALETTE.ink,
+              font: { family: "JetBrains Mono, monospace", size: 9.5 },
+            },
+          },
+        },
+      },
+    });
+  }
+
   function renderSelectedHospitalPanel() {
     const hospital = state.network.hospitals.find((h) => h.id === state.selectedHospitalId);
     if (!hospital) return;
@@ -646,6 +1034,29 @@
     state.chartInstance = buildForecastChart(els.forecastChart, forecastSeries);
 
     const rows = hospital.inventory.filter((item) => item.component === state.selectedComponent);
+    const compTotal = rows.reduce((sum, item) => sum + item.total_units, 0);
+    const compExpiring = rows.reduce((sum, item) => sum + Math.min(item.total_units, item.expiring_within_72h), 0);
+    const safePct = compTotal > 0 ? Math.round(((compTotal - compExpiring) / compTotal) * 100) : 0;
+
+    if (els.bloodGroupPieTotal) {
+      els.bloodGroupPieTotal.textContent = `${compTotal}u ${state.selectedComponent}`;
+    }
+    if (els.expiryGaugeBadge) {
+      els.expiryGaugeBadge.textContent = `${compExpiring}u ≤72h`;
+    }
+    if (els.expiryGaugeReadout) {
+      els.expiryGaugeReadout.textContent = `${safePct}% >72h`;
+    }
+
+    if (state.pieChartInstance) {
+      state.pieChartInstance.destroy();
+    }
+    state.pieChartInstance = buildBloodGroupPieChart(els.hospitalBloodGroupChart, rows);
+
+    if (state.semiChartInstance) {
+      state.semiChartInstance.destroy();
+    }
+    state.semiChartInstance = buildExpirySemiChart(els.hospitalExpirySemiChart, rows);
     els.inventoryMatrixBody.innerHTML = rows
       .map(
         (item) => `
@@ -800,6 +1211,14 @@
       state.modalChartInstance.destroy();
       state.modalChartInstance = null;
     }
+    if (state.modalPieChartInstance) {
+      state.modalPieChartInstance.destroy();
+      state.modalPieChartInstance = null;
+    }
+    if (state.modalSemiChartInstance) {
+      state.modalSemiChartInstance.destroy();
+      state.modalSemiChartInstance = null;
+    }
   }
 
   function openFocusOverlay(tabName = "topology") {
@@ -873,6 +1292,22 @@
     state.modalChartInstance = buildForecastChart(els.modalChartCanvas, forecastSeries);
 
     const rows = hospital.inventory.filter((item) => item.component === state.selectedComponent);
+    const compTotal = rows.reduce((sum, item) => sum + item.total_units, 0);
+    const compExpiring = rows.reduce((sum, item) => sum + Math.min(item.total_units, item.expiring_within_72h), 0);
+    const safePct = compTotal > 0 ? Math.round(((compTotal - compExpiring) / compTotal) * 100) : 0;
+
+    if (els.modalBloodGroupPieTotal) {
+      els.modalBloodGroupPieTotal.textContent = `${compTotal}u ${state.selectedComponent}`;
+    }
+    if (els.modalExpiryGaugeBadge) {
+      els.modalExpiryGaugeBadge.textContent = `${compExpiring}u ≤72h`;
+    }
+    if (els.modalExpiryGaugeReadout) {
+      els.modalExpiryGaugeReadout.textContent = `${safePct}% >72h`;
+    }
+
+    state.modalPieChartInstance = buildBloodGroupPieChart(els.modalBloodGroupChart, rows);
+    state.modalSemiChartInstance = buildExpirySemiChart(els.modalExpirySemiChart, rows);
     els.modalStockTable.innerHTML = rows
       .map(
         (item) => `
@@ -960,7 +1395,20 @@
       state.network = data.network_state;
       state.selectedHospitalId = rec.receiver_hospital_id;
       renderAll();
-      animateTransferPulse(data.donor_hospital_id, data.receiver_hospital_id);
+      animateTransferPulse(data.donor_hospital_id, data.receiver_hospital_id, {
+        units: rec.units,
+        bloodGroup: rec.blood_group,
+      });
+
+      if (!state.modalOpen && els.svgTransferPulseLayer) {
+        const mapPanel = els.svgTransferPulseLayer.closest(".topology-panel");
+        if (mapPanel) {
+          const rect = mapPanel.getBoundingClientRect();
+          if (rect.top < 80 || rect.bottom > window.innerHeight) {
+            mapPanel.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+        }
+      }
 
       els.transferBanner.textContent = `${data.message} (+${data.units_saved_increment} units saved from expiry)`;
       els.transferBanner.classList.remove("is-hidden");

@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HemoSlab — Regional Blood Shortage &amp; FEFO Cold-Chain Grid</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="/static/styles.css" />
+  <link rel="stylesheet" href="/static/landing.css" />
+  <script src="/static/landing.js" defer></script>
+</head>
+<body class="landing-body">
+  <!-- Top Tactile Navigation Header -->
+  <header class="landing-header" role="banner">
+    <div class="landing-header-inner">
+      <div class="brand-lockup">
+        <div class="brand-mark" aria-hidden="true">HS</div>
+        <div class="brand-copy">
+          <h1>HemoSlab</h1>
+          <p class="brand-subtitle">Deterministic 6-Facility Blood Shortage &amp; FEFO Allocation Grid</p>
+        </div>
+      </div>
+
+      <div class="landing-nav-actions">
+        <span class="status-pill status-safe mono">NETWORK ONLINE · 6 HOSPITALS</span>
+        <button type="button" id="headerGuestBtn" class="btn-tactile btn-approve">
+          Continue as Guest &rarr;
+        </button>
+        <button type="button" id="headerSignInBtn" class="btn-tactile is-active">
+          Sign In
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="landing-shell">
+    <!-- Hero Grid: Command Entry + Animated Vector Corridor -->
+    <section class="landing-hero-grid" aria-label="HemoSlab Overview and Access">
+      <!-- Left: Editorial Intro & Access Slabs -->
+      <article class="slab-card landing-intro-card">
+        <div class="intro-kicker-row">
+          <span class="status-pill status-critical mono">FEFO COLD-CHAIN DISPATCH</span>
+          <span class="mono intro-version">RANCHI REGIONAL GRID v1.0</span>
+        </div>
+
+        <h2 class="landing-headline">
+          Every unit tracked before expiry. Every transfer dispatched on time.
+        </h2>
+
+        <p class="landing-lead">
+          HemoSlab connects six regional hospitals and blood depots across Ranchi with a deterministic
+          hourly decay engine, First-Expired-First-Out (FEFO) route optimization, and structured AI
+          clinical briefings.
+        </p>
+
+        <div class="landing-cta-group">
+          <button type="button" id="heroSignInBtn" class="btn-tactile is-active btn-lg">
+            Sign In to Command Grid
+          </button>
+          <button type="button" id="heroGuestBtn" class="btn-tactile btn-approve btn-lg">
+            Continue as Guest &rarr;
+          </button>
+        </div>
+
+        <div class="landing-mini-stats">
+          <div class="mini-stat-slab">
+            <span class="metric-label">Shelf-Life Matrix</span>
+            <strong class="mono">PLT 120h · RBC 42d</strong>
+          </div>
+          <div class="mini-stat-slab">
+            <span class="metric-label">Alert Horizons</span>
+            <strong class="mono">&lt;48h CRIT · 48–120h WATCH</strong>
+          </div>
+          <div class="mini-stat-slab">
+            <span class="metric-label">Transfer Protocol</span>
+            <strong class="mono">ATOMIC FEFO + AUDIT</strong>
+          </div>
+        </div>
+      </article>
+
+      <!-- Right: Full Vector Animated Cold-Chain Corridor Scene -->
+      <article class="slab-card vector-scene-card">
+        <div class="panel-header scene-header">
+          <div>
+            <h2>Live Cold-Chain Transit Corridor</h2>
+            <p class="panel-caption">Vector simulation: mountain relay corridor, courier ambulance &amp; regional hospital hub</p>
+          </div>
+          <div class="scene-badges">
+            <span class="mono count-pill">TEMP: 4.0&deg;C</span>
+            <span class="status-pill status-safe mono">CORRIDOR CLEAR</span>
+          </div>
+        </div>
+
+        <div class="vector-stage">
+          <svg
+            id="corridorVectorSvg"
+            viewBox="0 0 960 440"
+            role="img"
+            aria-label="Animated vector illustration of an ambulance driving along a tree-lined mountain road toward a regional hospital on the right, with a medical drone and clouds in the sky"
+          >
+            <defs>
+              <!-- Subtle blueprint grid matching dashboard topology -->
+              <pattern id="landingGrid" width="32" height="32" patternUnits="userSpaceOnUse">
+                <path d="M 32 0 L 0 0 0 32" fill="none" stroke="#D5DDD6" stroke-width="1" />
+              </pattern>
+
+              <!-- Clip path for road markings -->
+              <clipPath id="roadClip">
+                <rect x="0" y="344" width="960" height="58" />
+              </clipPath>
+            </defs>
+
+            <!-- Sky Background + Grid -->
+            <rect x="0" y="0" width="960" height="440" fill="#EAEFE9" />
+            <rect x="0" y="0" width="960" height="344" fill="url(#landingGrid)" />
+
+            <!-- Flat Tactile Sun & Rotating Geometric Rays -->
+            <g class="vec-sun" transform="translate(115, 76)">
+              <g class="sun-rays-spin">
+                <line x1="0" y1="-44" x2="0" y2="-34" stroke="#B45309" stroke-width="2.5" />
+                <line x1="0" y1="34" x2="0" y2="44" stroke="#B45309" stroke-width="2.5" />
+                <line x1="-44" y1="0" x2="-34" y2="0" stroke="#B45309" stroke-width="2.5" />
+                <line x1="34" y1="0" x2="44" y2="0" stroke="#B45309" stroke-width="2.5" />
+                <line x1="-31" y1="-31" x2="-24" y2="-24" stroke="#B45309" stroke-width="2.5" />
+                <line x1="24" y1="24" x2="31" y2="31" stroke="#B45309" stroke-width="2.5" />
+                <line x1="31" y1="-31" x2="24" y2="-24" stroke="#B45309" stroke-width="2.5" />
+                <line x1="-24" y1="24" x2="-31" y2="31" stroke="#B45309" stroke-width="2.5" />
+              </g>
+              <circle cx="0" cy="0" r="24" fill="#FEF3C7" stroke="#1C1917" stroke-width="2" />
+              <circle cx="0" cy="0" r="14" fill="#FDE68A" stroke="#B45309" stroke-width="1.5" />
+            </g>
+
+            <!-- Drifting Flat Vector Clouds -->
+            <g class="cloud-drift-slow">
+              <g transform="translate(230, 56)">
+                <path
+                  d="M0,22 L76,22 C82,22 86,18 86,13 C86,8 81,4 75,5 C72,-4 60,-9 50,-4 C43,-13 26,-12 21,-1 C11,-2 4,5 5,13 C1,14 -3,17 0,22 Z"
+                  fill="#F4F7F3"
+                  stroke="#1C1917"
+                  stroke-width="1.8"
+                />
+              </g>
+              <g transform="translate(540, 44) scale(0.88)">
+                <path
+                  d="M0,22 L76,22 C82,22 86,18 86,13 C86,8 81,4 75,5 C72,-4 60,-9 50,-4 C43,-13 26,-12 21,-1 C11,-2 4,5 5,13 C1,14 -3,17 0,22 Z"
+                  fill="#F4F7F3"
+                  stroke="#1C1917"
+                  stroke-width="1.8"
+                />
+              </g>
+            </g>
+
+            <g class="cloud-drift-fast">
+              <g transform="translate(380, 96) scale(0.72)">
+                <path
+                  d="M0,22 L76,22 C82,22 86,18 86,13 C86,8 81,4 75,5 C72,-4 60,-9 50,-4 C43,-13 26,-12 21,-1 C11,-2 4,5 5,13 C1,14 -3,17 0,22 Z"
+                  fill="#F4F7F3"
+                  stroke="#1C1917"
+                  stroke-width="1.8"
+                />
+              </g>
+            </g>
+
+            <!-- Distant Vector Birds -->
+            <g class="birds-glide" stroke="#1C1917" stroke-width="1.8" fill="none" stroke-linecap="round">
+              <path d="M310,120 Q316,113 322,120 Q328,113 334,120" />
+              <path d="M346,132 Q351,126 356,132 Q361,126 366,132" />
+              <path d="M286,136 Q290,131 294,136 Q298,131 302,136" />
+            </g>
+
+            <!-- Far Mountain Range (Ridge Layer 1) -->
+            <g class="mountains-far">
+              <polygon points="-20,305 110,165 245,305" fill="#C9D3CA" stroke="#1C1917" stroke-width="2" />
+              <polygon points="110,165 142,200 124,205 110,192 94,204 79,198" fill="#F4F7F3" stroke="#1C1917" stroke-width="1.5" />
+
+              <polygon points="175,305 335,132 495,305" fill="#B9C7BB" stroke="#1C1917" stroke-width="2" />
+              <polygon points="335,132 374,174 352,181 334,166 314,180 295,174" fill="#F4F7F3" stroke="#1C1917" stroke-width="1.5" />
+
+              <polygon points="410,305 565,152 720,305" fill="#C9D3CA" stroke="#1C1917" stroke-width="2" />
+              <polygon points="565,152 597,184 580,189 564,176 547,188 533,182" fill="#F4F7F3" stroke="#1C1917" stroke-width="1.5" />
+
+              <polygon points="615,305 765,175 910,305" fill="#B9C7BB" stroke="#1C1917" stroke-width="2" />
+            </g>
+
+            <!-- Midground Rolling Foothills (Ridge Layer 2) -->
+            <path
+              d="M-10,308 Q130,248 270,290 Q410,242 540,288 Q680,256 830,295 L970,305 L970,336 L-10,336 Z"
+              fill="#A8BCA9"
+              stroke="#1C1917"
+              stroke-width="2"
+            />
+
+            <!-- Cold-Chain Telemetry Relay Tower on Left Hill -->
+            <g transform="translate(86, 206)">
+              <polygon points="10,72 22,12 34,72" fill="#EAEFE9" stroke="#1C1917" stroke-width="1.8" />
+              <line x1="14" y1="50" x2="30" y2="50" stroke="#1C1917" stroke-width="1.6" />
+              <line x1="17" y1="32" x2="27" y2="32" stroke="#1C1917" stroke-width="1.6" />
+              <circle cx="22" cy="10" r="4.5" fill="#15803D" stroke="#1C1917" stroke-width="1.5" />
+              <circle cx="22" cy="10" r="10" fill="none" stroke="#15803D" stroke-width="1.5" class="tower-pulse" />
+              <circle cx="22" cy="10" r="18" fill="none" stroke="#15803D" stroke-width="1.2" class="tower-pulse-delay" />
+            </g>
+
+            <!-- Drone Flight Arc & Animated Vector Cold-Chain Drone -->
+            <path
+              d="M112,212 Q455,68 785,152"
+              fill="none"
+              stroke="#15803D"
+              stroke-width="1.5"
+              stroke-dasharray="5 6"
+              opacity="0.7"
+            />
+            <g class="drone-flight">
+              <!-- Drone body + cryo pod -->
+              <line x1="-18" y1="-4" x2="18" y2="-4" stroke="#1C1917" stroke-width="2.5" />
+              <line x1="-14" y1="-8" x2="-14" y2="-4" stroke="#1C1917" stroke-width="2" />
+              <line x1="14" y1="-8" x2="14" y2="-4" stroke="#1C1917" stroke-width="2" />
+              <ellipse cx="-14" cy="-9" rx="9" ry="2" fill="#44403C" class="rotor-blur" />
+              <ellipse cx="14" cy="-9" rx="9" ry="2" fill="#44403C" class="rotor-blur" />
+              <rect x="-10" y="-6" width="20" height="8" fill="#F4F7F3" stroke="#1C1917" stroke-width="1.6" />
+              <!-- Hanging Cryo Blood Box -->
+              <rect x="-7" y="4" width="14" height="10" fill="#FEE2E2" stroke="#1C1917" stroke-width="1.5" />
+              <line x1="-2" y1="9" x2="2" y2="9" stroke="#B91C1C" stroke-width="1.8" />
+              <line x1="0" y1="7" x2="0" y2="11" stroke="#B91C1C" stroke-width="1.8" />
+              <!-- Drone Tag -->
+              <rect x="-24" y="-27" width="48" height="14" fill="#F4F7F3" stroke="#1C1917" stroke-width="1.2" />
+              <text x="0" y="-17" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" font-weight="700" fill="#1C1917">
+                CRYO-UAV
+              </text>
+            </g>
+
+            <!-- Roadside Grass Verge -->
+            <rect x="0" y="324" width="960" height="22" fill="#C7D6C8" stroke="#1C1917" stroke-width="2" />
+
+            <!-- Vector Trees (Pine & Rounded Sage Trees) along the Foothills & Roadside -->
+            <g class="trees-layer">
+              <!-- Tree Cluster Left -->
+              <g transform="translate(36, 268)" class="tree-sway">
+                <rect x="13" y="46" width="6" height="14" fill="#78350F" stroke="#1C1917" stroke-width="1.5" />
+                <polygon points="16,4 2,32 30,32" fill="#15803D" stroke="#1C1917" stroke-width="1.8" />
+                <polygon points="16,18 0,48 32,48" fill="#166534" stroke="#1C1917" stroke-width="1.8" />
+              </g>
+              <g transform="translate(142, 276)">
+                <rect x="11" y="38" width="5" height="12" fill="#78350F" stroke="#1C1917" stroke-width="1.5" />
+                <circle cx="13.5" cy="26" r="14" fill="#4D7C5B" stroke="#1C1917" stroke-width="1.8" />
+                <circle cx="21" cy="30" r="9" fill="#15803D" stroke="#1C1917" stroke-width="1.5" />
+              </g>
+              <g transform="translate(216, 266)" class="tree-sway-alt">
+                <rect x="14" y="48" width="6" height="14" fill="#78350F" stroke="#1C1917" stroke-width="1.5" />
+                <polygon points="17,2 3,31 31,31" fill="#15803D" stroke="#1C1917" stroke-width="1.8" />
+                <polygon points="17,17 0,50 34,50" fill="#166534" stroke="#1C1917" stroke-width="1.8" />
+              </g>
+
+              <!-- Tree Cluster Center -->
+              <g transform="translate(324, 278)">
+                <rect x="10" y="36" width="5" height="12" fill="#78350F" stroke="#1C1917" stroke-width="1.5" />
+                <polygon points="12.5,4 1,38 24,38" fill="#166534" stroke="#1C1917" stroke-width="1.8" />
+              </g>
+              <g transform="translate(418, 272)" class="tree-sway">
+                <rect x="12" y="42" width="6" height="13" fill="#78350F" stroke="#1C1917" stroke-width="1.5" />
+                <circle cx="15" cy="28" r="16" fill="#15803D" stroke="#1C1917" stroke-width="1.8" />
+                <circle cx="8" cy="33" r="10" fill="#4D7C5B" stroke="#1C1917" stroke-width="1.5" />
+              </g>
+              <g transform="translate(520, 268)" class="tree-sway-alt">
+                <rect x="13" y="46" width="6" height="14" fill="#78350F" stroke="#1C1917" stroke-width="1.5" />
+                <polygon points="16,4 2,32 30,32" fill="#15803D" stroke="#1C1917" stroke-width="1.8" />
+                <polygon points="16,18 0,48 32,48" fill="#166534" stroke="#1C1917" stroke-width="1.8" />
+              </g>
+              <g transform="translate(610, 278)">
+                <rect x="11" y="38" width="5" height="12" fill="#78350F" stroke="#1C1917" stroke-width="1.5" />
+                <circle cx="13.5" cy="26" r="13" fill="#4D7C5B" stroke="#1C1917" stroke-width="1.8" />
+              </g>
+            </g>
+
+            <!-- Roadside Highway Signs & Lamps -->
+            <g transform="translate(278, 290)">
+              <rect x="5" y="18" width="4" height="30" fill="#44403C" stroke="#1C1917" stroke-width="1.3" />
+              <rect x="-18" y="0" width="50" height="20" fill="#15803D" stroke="#1C1917" stroke-width="1.6" />
+              <text x="7" y="13" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" font-weight="700" fill="#F4F7F3">
+                HUB &rarr;
+              </text>
+            </g>
+
+            <g transform="translate(476, 280)">
+              <path d="M0,56 L0,8 L14,8" fill="none" stroke="#1C1917" stroke-width="2.5" />
+              <rect x="10" y="6" width="12" height="5" fill="#FEF3C7" stroke="#1C1917" stroke-width="1.3" />
+            </g>
+            <g transform="translate(178, 280)">
+              <path d="M0,56 L0,8 L14,8" fill="none" stroke="#1C1917" stroke-width="2.5" />
+              <rect x="10" y="6" width="12" height="5" fill="#FEF3C7" stroke="#1C1917" stroke-width="1.3" />
+            </g>
+
+            <!-- Paved Regional Highway -->
+            <rect x="0" y="344" width="960" height="58" fill="#292524" stroke="#1C1917" stroke-width="2.2" />
+            <!-- Top & bottom road shoulder lines -->
+            <line x1="0" y1="350" x2="960" y2="350" stroke="#A8A29E" stroke-width="1.5" />
+            <line x1="0" y1="396" x2="960" y2="396" stroke="#A8A29E" stroke-width="1.5" />
+            <!-- Animated Scrolling Dashed Center Lane -->
+            <line
+              x1="0"
+              y1="373"
+              x2="960"
+              y2="373"
+              stroke="#FEF3C7"
+              stroke-width="3"
+              stroke-dasharray="26 20"
+              class="road-dash-scroll"
+              clip-path="url(#roadClip)"
+            />
+
+            <!-- Foreground Ground Strip -->
+            <rect x="0" y="402" width="960" height="38" fill="#DCE5DD" stroke="#1C1917" stroke-width="2" />
+            <text x="20" y="425" font-family="JetBrains Mono, monospace" font-size="10.5" font-weight="700" fill="#44403C">
+              ROUTE: RANCHI-CORRIDOR-01 // FEFO COLD-CHAIN DISPATCH // ZERO-WASTAGE PROTOCOL
+            </text>
+
+            <!-- RIGHT: Regional Hospital Complex (Tactile 2D-in-3D Vector Architecture) -->
+            <g id="vectorHospital" transform="translate(658, 128)">
+              <!-- Hard 3D Offset Shadow -->
+              <rect x="10" y="34" width="276" height="192" fill="#1C1917" />
+
+              <!-- Cryo Blood Storage Left Wing -->
+              <rect x="0" y="92" width="76" height="134" fill="#EAEFE9" stroke="#1C1917" stroke-width="2.2" />
+              <rect x="8" y="102" width="60" height="18" fill="#1C1917" />
+              <text x="38" y="114" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8.5" font-weight="700" fill="#DCFCE7">
+                CRYO 4&deg;C
+              </text>
+              <!-- Cryo Wing Windows -->
+              <rect x="12" y="130" width="22" height="18" fill="#C9D3CA" stroke="#1C1917" stroke-width="1.5" />
+              <rect x="42" y="130" width="22" height="18" fill="#C9D3CA" stroke="#1C1917" stroke-width="1.5" />
+              <!-- Ambulance Receiving Bay -->
+              <rect x="10" y="168" width="56" height="58" fill="#292524" stroke="#1C1917" stroke-width="2" />
+              <rect x="14" y="172" width="48" height="8" fill="#B45309" />
+              <circle cx="38" cy="160" r="4.5" fill="#15803D" stroke="#1C1917" stroke-width="1.4" class="beacon-blink" />
+
+              <!-- Main Hospital Tower -->
+              <rect x="76" y="28" width="204" height="198" fill="#F4F7F3" stroke="#1C1917" stroke-width="2.2" />
+
+              <!-- Rooftop Helipad & Antenna -->
+              <rect x="94" y="16" width="68" height="12" fill="#44403C" stroke="#1C1917" stroke-width="1.8" />
+              <text x="128" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" font-weight="700" fill="#F4F7F3">
+                HELIPAD H
+              </text>
+              <line x1="242" y1="28" x2="242" y2="2" stroke="#1C1917" stroke-width="2.2" />
+              <circle cx="242" cy="2" r="4" fill="#B91C1C" stroke="#1C1917" stroke-width="1.4" class="beacon-blink" />
+
+              <!-- Hospital Fascia Signboard -->
+              <rect x="88" y="38" width="180" height="28" fill="#1C1917" />
+              <text x="178" y="56" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-size="13" font-weight="700" fill="#F4F7F3" letter-spacing="0.8">
+                RIMS REGIONAL HUB
+              </text>
+
+              <!-- Red Cross Emblem Badge -->
+              <rect x="158" y="74" width="40" height="40" fill="#FEE2E2" stroke="#1C1917" stroke-width="2" />
+              <rect x="173" y="81" width="10" height="26" fill="#B91C1C" />
+              <rect x="165" y="89" width="26" height="10" fill="#B91C1C" />
+
+              <!-- Upper Floor Windows Grid -->
+              <g fill="#D5DDD6" stroke="#1C1917" stroke-width="1.5">
+                <rect x="94" y="78" width="24" height="24" />
+                <rect x="124" y="78" width="24" height="24" />
+                <rect x="208" y="78" width="24" height="24" />
+                <rect x="238" y="78" width="24" height="24" />
+
+                <rect x="94" y="122" width="24" height="24" />
+                <rect x="124" y="122" width="24" height="24" />
+                <rect x="154" y="122" width="24" height="24" />
+                <rect x="184" y="122" width="24" height="24" />
+                <rect x="214" y="122" width="24" height="24" />
+                <rect x="244" y="122" width="24" height="24" />
+              </g>
+
+              <!-- Ground Entrance Canopy & Sliding Doors -->
+              <rect x="132" y="166" width="92" height="10" fill="#B91C1C" stroke="#1C1917" stroke-width="1.8" />
+              <rect x="142" y="176" width="72" height="50" fill="#C9D3CA" stroke="#1C1917" stroke-width="2" />
+              <line x1="178" y1="176" x2="178" y2="226" stroke="#1C1917" stroke-width="2" />
+              <rect x="94" y="176" width="32" height="34" fill="#DCE5DD" stroke="#1C1917" stroke-width="1.5" />
+              <rect x="230" y="176" width="32" height="34" fill="#DCE5DD" stroke="#1C1917" stroke-width="1.5" />
+            </g>
+
+            <!-- ANIMATED VECTOR AMBULANCE (Moving along the road toward the hospital) -->
+            <g class="ambulance-drive">
+              <g class="ambulance-bounce">
+                <!-- Live Telemetry Tag above Ambulance -->
+                <g transform="translate(72, -32)">
+                  <rect x="-56" y="0" width="128" height="20" fill="#1C1917" />
+                  <text x="8" y="13" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" font-weight="700" fill="#DCFCE7">
+                    FEFO-01 · O- RBC · 4&deg;C
+                  </text>
+                </g>
+
+                <!-- Headlight Beam Cone -->
+                <polygon points="154,32 214,20 214,48" fill="#FEF3C7" opacity="0.55" />
+
+                <!-- Roof Emergency Lightbar -->
+                <rect x="106" y="-8" width="22" height="8" fill="#1C1917" stroke="#1C1917" stroke-width="1.5" />
+                <rect x="108" y="-6" width="9" height="5" fill="#B91C1C" class="siren-red" />
+                <rect x="117" y="-6" width="9" height="5" fill="#F59E0B" class="siren-amber" />
+
+                <!-- Ambulance Shadow on Road -->
+                <ellipse cx="78" cy="52" rx="74" ry="5" fill="#1C1917" opacity="0.55" />
+
+                <!-- Main Cargo Box & Cab Body -->
+                <path
+                  d="M8,0 L108,0 L108,10 L138,10 L154,24 L154,44 L8,44 Z"
+                  fill="#F4F7F3"
+                  stroke="#1C1917"
+                  stroke-width="2.2"
+                />
+
+                <!-- Crimson Cold-Chain Side Stripe -->
+                <rect x="10" y="25" width="142" height="7" fill="#B91C1C" />
+
+                <!-- Cab Windshield & Door Window -->
+                <polygon points="114,14 134,14 146,24 114,24" fill="#C9D3CA" stroke="#1C1917" stroke-width="1.6" />
+
+                <!-- Red Medical Cross on Side Cargo -->
+                <rect x="48" y="6" width="6" height="16" fill="#B91C1C" />
+                <rect x="43" y="11" width="16" height="6" fill="#B91C1C" />
+
+                <!-- Side Label -->
+                <text x="72" y="19" font-family="JetBrains Mono, monospace" font-size="8.5" font-weight="700" fill="#1C1917">
+                  HEMOSLAB
+                </text>
+
+                <!-- Front Bumper & Headlight -->
+                <rect x="148" y="34" width="9" height="8" fill="#44403C" stroke="#1C1917" stroke-width="1.4" />
+                <rect x="150" y="27" width="5" height="5" fill="#FEF3C7" stroke="#1C1917" stroke-width="1.2" />
+                <!-- Rear Taillight -->
+                <rect x="6" y="28" width="4" height="7" fill="#B91C1C" stroke="#1C1917" stroke-width="1.2" />
+
+                <!-- Rotating Front & Rear Vector Wheels -->
+                <g transform="translate(36, 44)">
+                  <circle cx="0" cy="0" r="11" fill="#1C1917" />
+                  <g class="wheel-spin">
+                    <circle cx="0" cy="0" r="5.5" fill="#EAEFE9" stroke="#1C1917" stroke-width="1.2" />
+                    <line x1="-5" y1="0" x2="5" y2="0" stroke="#1C1917" stroke-width="1.4" />
+                    <line x1="0" y1="-5" x2="0" y2="5" stroke="#1C1917" stroke-width="1.4" />
+                  </g>
+                </g>
+
+                <g transform="translate(126, 44)">
+                  <circle cx="0" cy="0" r="11" fill="#1C1917" />
+                  <g class="wheel-spin">
+                    <circle cx="0" cy="0" r="5.5" fill="#EAEFE9" stroke="#1C1917" stroke-width="1.2" />
+                    <line x1="-5" y1="0" x2="5" y2="0" stroke="#1C1917" stroke-width="1.4" />
+                    <line x1="0" y1="-5" x2="0" y2="5" stroke="#1C1917" stroke-width="1.4" />
+                  </g>
+                </g>
+              </g>
+            </g>
+          </svg>
+        </div>
+
+        <div class="corridor-telemetry-strip mono">
+          <span><strong>ORIGIN:</strong> SADAR DEPOT (SRB)</span>
+          <span><strong>DEST:</strong> RIMS TRAUMA HUB (RIM)</span>
+          <span><strong>CARGO:</strong> 6u O- RBCs · EXP 38h</span>
+          <span><strong>ETA:</strong> 14 MIN COLD-CHAIN</span>
+        </div>
+      </article>
+    </section>
+
+    <!-- Bottom 3 Tactile Architecture Pillars -->
+    <section class="pillars-grid" aria-label="Core System Capabilities">
+      <article class="slab-card pillar-card">
+        <div class="pillar-header">
+          <span class="status-pill status-critical mono">01 · MATH ENGINE</span>
+        </div>
+        <h3>Hourly Zero-Stock Forecasting</h3>
+        <p>
+          Simulates 14-day blood group decay across RBCs (42d), Platelets (5d), and Plasma (365d)
+          with clinical ABO/Rh compatibility rules and stress-test surge multipliers.
+        </p>
+      </article>
+
+      <article class="slab-card pillar-card">
+        <div class="pillar-header">
+          <span class="status-pill status-watch mono">02 · FEFO OPTIMIZER</span>
+        </div>
+        <h3>Shortest-Expiry Dispatch Routing</h3>
+        <p>
+          Matches surplus depots with critical trauma and oncology wards using real Ranchi
+          inter-hospital distances, cold-chain transit ETAs, and atomic SQLite ledger commits.
+        </p>
+      </article>
+
+      <article class="slab-card pillar-card">
+        <div class="pillar-header">
+          <span class="status-pill status-safe mono">03 · CLINICAL BRIEF</span>
+        </div>
+        <h3>Structured AI &amp; Offline Fallback</h3>
+        <p>
+          Generates strict 4-field clinical action plans and raw MathEngine audit snapshots—always
+          available online via Gemini or via deterministic offline protocol.
+        </p>
+      </article>
+    </section>
+  </main>
+
+  <!-- Sign In Modal (Tactile 2D-in-3D Sheet, Zero Backdrop Blur) -->
+  <div id="signInModal" class="focus-overlay is-hidden" role="dialog" aria-modal="true" aria-labelledby="signInTitle">
+    <div class="focus-sheet signin-sheet">
+      <div class="focus-header">
+        <div class="brand-lockup">
+          <div class="brand-mark signin-mark" aria-hidden="true">HS</div>
+          <div>
+            <h2 id="signInTitle" class="signin-modal-title">Operator Sign In</h2>
+            <p class="panel-caption">Authenticate to access the 6-hospital FEFO Command Dashboard</p>
+          </div>
+        </div>
+        <button type="button" id="closeSignInModal" class="btn-tactile btn-sm btn-danger-outline">
+          Close [Esc] &times;
+        </button>
+      </div>
+
+      <form id="signInForm" class="signin-form" novalidate>
+        <div class="form-field">
+          <label for="operatorIdInput">Operator ID or Clinical Email</label>
+          <input
+            type="text"
+            id="operatorIdInput"
+            name="operatorId"
+            placeholder="e.g. dr.sharma@rims.hemoslab.in"
+            autocomplete="username"
+            required
+          />
+        </div>
+
+        <div class="form-field">
+          <label for="facilitySelect">Assigned Facility / Command Scope</label>
+          <select id="facilitySelect" name="facility">
+            <option value="ALL">Regional Command Center (All 6 Facilities)</option>
+            <option value="HOSP-01">HOSP-01 · RIMS Level-1 Trauma Center</option>
+            <option value="HOSP-02">HOSP-02 · Sadar Hospital Regional Blood Bank</option>
+            <option value="HOSP-03">HOSP-03 · Ranchi Cancer Hospital (RCHRC)</option>
+            <option value="HOSP-04">HOSP-04 · Rani Children &amp; Maternal Hospital</option>
+            <option value="HOSP-05">HOSP-05 · Paras HEC Multispecialty Hospital</option>
+            <option value="HOSP-06">HOSP-06 · Medanta Heart &amp; Surgical Institute</option>
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label for="passcodeInput">Command Passcode</label>
+          <input
+            type="password"
+            id="passcodeInput"
+            name="passcode"
+            placeholder="Enter operator passcode"
+            autocomplete="current-password"
+            required
+          />
+        </div>
+
+        <p id="signInError" class="signin-error is-hidden" role="alert"></p>
+
+        <div class="signin-actions">
+          <button type="button" id="fillDemoCredsBtn" class="btn-tactile btn-sm">
+            Fill Demo Operator
+          </button>
+          <div class="signin-submit-group">
+            <button type="button" id="modalGuestBtn" class="btn-tactile btn-approve">
+              Continue as Guest
+            </button>
+            <button type="submit" class="btn-tactile is-active">
+              Sign In &amp; Launch &rarr;
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

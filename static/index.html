@@ -135,47 +135,66 @@
 
     <!-- Primary Grid: Topology Map + 14-Day Forecast & Facility Matrix -->
     <section class="workspace-grid">
-      <!-- 3. Interactive Regional Topology Map (Pure SVG) -->
-      <article class="slab-card topology-panel">
-        <div class="panel-header panel-zoom-header" data-zoom-header="topology" title="Click header to expand Regional Topology">
-          <div>
-            <h2>Regional Cold-Chain Topology</h2>
-            <p class="panel-caption">Click any facility node to inspect 14-day decay curves &amp; blood group stock</p>
-          </div>
-          <div class="panel-header-actions">
-            <div class="legend-row">
-              <span class="legend-item"><i class="dot dot-critical"></i>Critical &lt;48h</span>
-              <span class="legend-item"><i class="dot dot-watch"></i>Watch 48–120h</span>
-              <span class="legend-item"><i class="dot dot-safe"></i>Safe &gt;120h</span>
+      <div class="workspace-left-stack">
+        <!-- 3. Interactive Regional Topology Map (Pure SVG) -->
+        <article class="slab-card topology-panel">
+          <div class="panel-header panel-zoom-header" data-zoom-header="topology" title="Click header to expand Regional Topology">
+            <div>
+              <h2>Regional Cold-Chain Topology</h2>
+              <p class="panel-caption">Click any facility node to inspect 14-day decay curves &amp; blood group stock</p>
             </div>
-            <button type="button" class="btn-tactile btn-sm btn-expand" data-zoom-tab="topology" aria-label="Expand Regional Topology">
-              Expand &#x2922;
-            </button>
+            <div class="panel-header-actions">
+              <div class="legend-row">
+                <span class="legend-item"><i class="dot dot-critical"></i>Critical &lt;48h</span>
+                <span class="legend-item"><i class="dot dot-watch"></i>Watch 48–120h</span>
+                <span class="legend-item"><i class="dot dot-safe"></i>Safe &gt;120h</span>
+              </div>
+              <button type="button" class="btn-tactile btn-sm btn-expand" data-zoom-tab="topology" aria-label="Expand Regional Topology">
+                Expand &#x2922;
+              </button>
+            </div>
           </div>
-        </div>
 
-        <div class="svg-stage">
-          <svg
-            id="topologySvg"
-            viewBox="0 0 800 500"
-            role="img"
-            aria-label="Regional 6-hospital cold-chain topology map"
-          >
-            <defs>
-              <pattern id="gridPattern" width="40" height="40" patternUnits="userSpaceOnUse">
-                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#D5DDD6" stroke-width="1" />
-              </pattern>
-            </defs>
-            <rect x="0" y="0" width="800" height="500" fill="#EAEFE9" />
-            <rect x="0" y="0" width="800" height="500" fill="url(#gridPattern)" />
-            <g id="svgEdgesLayer"></g>
-            <g id="svgTransferPulseLayer"></g>
-            <g id="svgNodesLayer"></g>
-          </svg>
-        </div>
+          <div class="svg-stage">
+            <svg
+              id="topologySvg"
+              viewBox="0 0 800 500"
+              role="img"
+              aria-label="Regional 6-hospital cold-chain topology map"
+            >
+              <defs>
+                <pattern id="gridPattern" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#D5DDD6" stroke-width="1" />
+                </pattern>
+              </defs>
+              <rect x="0" y="0" width="800" height="500" fill="#EAEFE9" />
+              <rect x="0" y="0" width="800" height="500" fill="url(#gridPattern)" />
+              <g id="svgEdgesLayer"></g>
+              <g id="svgNodesLayer"></g>
+              <g id="svgTransferPulseLayer"></g>
+            </svg>
+          </div>
 
-        <div id="transferBanner" class="transfer-banner is-hidden" role="status" aria-live="polite"></div>
-      </article>
+          <div id="transferBanner" class="transfer-banner is-hidden" role="status" aria-live="polite"></div>
+        </article>
+
+        <!-- Regional Facility Stock & Expiry Pulse (Fills left column cleanly) -->
+        <article class="slab-card facility-pulse-panel" aria-label="Regional Facility Stock and Expiry Pulse">
+          <div class="panel-header">
+            <div>
+              <h2>Regional Facility Stock &amp; Expiry Pulse</h2>
+              <p class="panel-caption">Click any facility row to focus its forecast, pie breakdown &amp; shelf-life gauge</p>
+            </div>
+            <span id="networkComponentTotals" class="mono count-pill">PLT --u · RBC --u · PLS --u</span>
+          </div>
+
+          <div id="facilityPulseList" class="facility-pulse-list"></div>
+
+          <div id="topCorridorStrip" class="corridor-highlight-strip mono">
+            Evaluating active cold-chain corridors...
+          </div>
+        </article>
+      </div>
 
       <!-- 5. 14-Day Forecast Panel (Chart.js) + Selected Hospital Inventory -->
       <article class="slab-card forecast-panel">
@@ -208,6 +227,29 @@
 
         <div class="chart-wrap">
           <canvas id="forecastChart"></canvas>
+        </div>
+
+        <div class="stock-breakdown-grid" aria-label="Hospital Stock and Expiry Breakdown Charts">
+          <div class="mini-chart-card">
+            <div class="mini-chart-header">
+              <span class="mini-chart-title">Blood Group Share</span>
+              <span id="bloodGroupPieTotal" class="mono mini-chart-meta">--u total</span>
+            </div>
+            <div class="mini-chart-canvas-wrap">
+              <canvas id="hospitalBloodGroupChart"></canvas>
+            </div>
+          </div>
+
+          <div class="mini-chart-card">
+            <div class="mini-chart-header">
+              <span class="mini-chart-title">Expiry &amp; Shelf-Life Gauge</span>
+              <span id="expiryGaugeBadge" class="mono mini-chart-meta">--u &le;72h</span>
+            </div>
+            <div class="mini-chart-canvas-wrap semi-gauge-wrap">
+              <canvas id="hospitalExpirySemiChart"></canvas>
+              <div id="expiryGaugeReadout" class="semi-gauge-readout mono">--%</div>
+            </div>
+          </div>
         </div>
 
         <div class="inventory-matrix-wrap">
@@ -370,8 +412,8 @@
               <rect x="0" y="0" width="1040" height="540" fill="#EAEFE9" />
               <rect x="0" y="0" width="1040" height="540" fill="url(#modalGridPattern)" />
               <g id="modalSvgEdgesLayer"></g>
-              <g id="modalSvgTransferPulseLayer"></g>
               <g id="modalSvgNodesLayer"></g>
+              <g id="modalSvgTransferPulseLayer"></g>
             </svg>
           </div>
         </section>
@@ -402,6 +444,29 @@
 
           <div class="modal-chart-wrap">
             <canvas id="modalChartCanvas"></canvas>
+          </div>
+
+          <div class="stock-breakdown-grid modal-breakdown-grid" aria-label="Zoomed Hospital Stock and Expiry Breakdown Charts">
+            <div class="mini-chart-card">
+              <div class="mini-chart-header">
+                <span class="mini-chart-title">Blood Group Share</span>
+                <span id="modalBloodGroupPieTotal" class="mono mini-chart-meta">--u total</span>
+              </div>
+              <div class="mini-chart-canvas-wrap">
+                <canvas id="modalBloodGroupChart"></canvas>
+              </div>
+            </div>
+
+            <div class="mini-chart-card">
+              <div class="mini-chart-header">
+                <span class="mini-chart-title">Expiry &amp; Shelf-Life Gauge</span>
+                <span id="modalExpiryGaugeBadge" class="mono mini-chart-meta">--u &le;72h</span>
+              </div>
+              <div class="mini-chart-canvas-wrap semi-gauge-wrap">
+                <canvas id="modalExpirySemiChart"></canvas>
+                <div id="modalExpiryGaugeReadout" class="semi-gauge-readout mono">--%</div>
+              </div>
+            </div>
           </div>
 
           <div class="inventory-matrix-wrap">
