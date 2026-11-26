@@ -486,7 +486,6 @@
   background-color: var(--bg-inset);
   border: 1.5px solid var(--border);
   box-shadow: var(--shadow-sm);
-  outline: none;
 }
 
 .form-field input:focus,

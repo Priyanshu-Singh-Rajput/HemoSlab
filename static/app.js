@@ -14,13 +14,13 @@
     gridLine: "#D5DDD6",
     ink: "#1C1917",
     inkMuted: "#44403C",
-    critical: "#B91C1C",
+    critical: "#991B1B",
     criticalTint: "#FEE2E2",
     criticalWash: "#FCF1F1",
-    watch: "#B45309",
+    watch: "#92400E",
     watchTint: "#FEF3C7",
     watchWash: "#FCF6E8",
-    safe: "#15803D",
+    safe: "#166534",
     safeTint: "#DCFCE7",
     safeWash: "#EFF7F1",
     edgeIdle: "#8C968D",
@@ -351,6 +351,9 @@
       const g = createSvgEl("g", {
         class: `svg-node ${isSelected ? "is-selected" : ""}`,
         "data-hospital-id": h.id,
+        role: "button",
+        tabindex: "0",
+        "aria-label": `${h.name} (${h.code}), ${h.status}, min buffer ${formatHours(h.min_zero_stock_hours)}`,
       });
 
       // Restrained criticalRingPulse ONLY on Critical (<48h) nodes
@@ -469,7 +472,7 @@
       countText.textContent = `${formatHours(h.min_zero_stock_hours)} · ${h.critical_pair}`;
       g.appendChild(countText);
 
-      g.addEventListener("click", (evt) => {
+      const selectThisHospital = (evt) => {
         evt.stopPropagation();
         state.selectedHospitalId = h.id;
         renderTopologyMap();
@@ -477,6 +480,14 @@
         renderSelectedHospitalPanel();
         if (state.modalOpen) {
           renderActiveModalView();
+        }
+      };
+
+      g.addEventListener("click", selectThisHospital);
+      g.addEventListener("keydown", (evt) => {
+        if (evt.key === "Enter" || evt.key === " ") {
+          evt.preventDefault();
+          selectThisHospital(evt);
         }
       });
 
@@ -1243,7 +1254,9 @@
     }
 
     document.querySelectorAll(".focus-tab").forEach((btn) => {
-      btn.classList.toggle("is-active", btn.getAttribute("data-modal-tab") === tabName);
+      const active = btn.getAttribute("data-modal-tab") === tabName;
+      btn.classList.toggle("is-active", active);
+      btn.setAttribute("aria-selected", String(active));
     });
     els.modalPanelTopology.classList.toggle("is-active", tabName === "topology");
     els.modalPanelForecast.classList.toggle("is-active", tabName === "forecast");
@@ -1284,7 +1297,9 @@
     )}`;
 
     document.querySelectorAll(".modal-comp-tab").forEach((t) => {
-      t.classList.toggle("is-active", t.getAttribute("data-modal-component") === state.selectedComponent);
+      const active = t.getAttribute("data-modal-component") === state.selectedComponent;
+      t.classList.toggle("is-active", active);
+      t.setAttribute("aria-selected", String(active));
     });
 
     const forecastSeries = hospital.forecasts[state.selectedComponent] || [];
@@ -1497,7 +1512,9 @@
 
   function activateDrawerTab(tabName) {
     document.querySelectorAll(".drawer-tab").forEach((t) => {
-      t.classList.toggle("is-active", t.getAttribute("data-tab") === tabName);
+      const active = t.getAttribute("data-tab") === tabName;
+      t.classList.toggle("is-active", active);
+      t.setAttribute("aria-selected", String(active));
     });
     document.getElementById("tabBrief").classList.toggle("is-active", tabName === "brief");
     document.getElementById("tabMath").classList.toggle("is-active", tabName === "math");
@@ -1511,7 +1528,9 @@
     if (!comp) return;
     state.selectedComponent = comp;
     document.querySelectorAll(".comp-tab").forEach((t) => {
-      t.classList.toggle("is-active", t.getAttribute("data-component") === comp);
+      const active = t.getAttribute("data-component") === comp;
+      t.classList.toggle("is-active", active);
+      t.setAttribute("aria-selected", String(active));
     });
     renderSelectedHospitalPanel();
     if (state.modalOpen && state.modalTab === "forecast") {
@@ -1536,8 +1555,12 @@
         if (!scenario || scenario === state.scenario) return;
         state.scenario = scenario;
         state.activeAlert = null;
-        document.querySelectorAll(".scenario-btn").forEach((b) => b.classList.remove("is-active"));
+        document.querySelectorAll(".scenario-btn").forEach((b) => {
+          b.classList.remove("is-active");
+          b.setAttribute("aria-pressed", "false");
+        });
         btn.classList.add("is-active");
+        btn.setAttribute("aria-pressed", "true");
         await fetchNetworkState();
       });
     });
@@ -1555,7 +1578,9 @@
         els.demandMultSlider.value = "1.0";
         els.demandMultValue.textContent = "1.0x";
         document.querySelectorAll(".scenario-btn").forEach((b) => {
-          b.classList.toggle("is-active", b.getAttribute("data-scenario") === "baseline");
+          const active = b.getAttribute("data-scenario") === "baseline";
+          b.classList.toggle("is-active", active);
+          b.setAttribute("aria-pressed", String(active));
         });
 
         const res = await fetch("/api/reset?scenario=baseline&donation_drop=0&demand_mult=1.0", {
@@ -1630,20 +1655,11 @@
       });
     });
 
-    // Expand Buttons & Non-Interactive Header Zoom Triggers
+    // Expand Buttons for Zoomed Focus Overlay
     document.querySelectorAll("[data-zoom-tab]").forEach((btn) => {
       btn.addEventListener("click", (evt) => {
         evt.stopPropagation();
         openFocusOverlay(btn.getAttribute("data-zoom-tab"));
-      });
-    });
-
-    document.querySelectorAll("[data-zoom-header]").forEach((hdr) => {
-      hdr.addEventListener("click", (evt) => {
-        if (evt.target.closest("button, a, input, select, .svg-node, table")) {
-          return;
-        }
-        openFocusOverlay(hdr.getAttribute("data-zoom-header"));
       });
     });
 
@@ -1676,7 +1692,9 @@
       btn.addEventListener("click", () => {
         state.modalTimelineFilter = btn.getAttribute("data-timeline-filter") || "all";
         document.querySelectorAll(".timeline-filter-btn").forEach((b) => {
-          b.classList.toggle("is-active", b === btn);
+          const active = b === btn;
+          b.classList.toggle("is-active", active);
+          b.setAttribute("aria-pressed", String(active));
         });
         renderModalTimeline();
       });

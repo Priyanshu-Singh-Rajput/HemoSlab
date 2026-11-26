@@ -18,11 +18,11 @@
   --border: #1C1917;
   --rule-subtle: #C9D3CA;
 
-  --critical: #B91C1C;
+  --critical: #991B1B;
   --critical-tint: #FEE2E2;
-  --watch: #B45309;
+  --watch: #92400E;
   --watch-tint: #FEF3C7;
-  --safe: #15803D;
+  --safe: #166534;
   --safe-tint: #DCFCE7;
 
   --shadow-offset: 4px 4px 0px #1C1917;
@@ -65,6 +65,29 @@ body {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 8px;
+  z-index: 200;
+  background-color: var(--ink);
+  color: var(--ink-inverse);
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  border: 2px solid var(--border);
+}
+
+.skip-link:focus {
+  left: 12px;
+}
+
+:focus-visible {
+  outline: 2.5px solid var(--ink);
+  outline-offset: 2px;
 }
 
 /* ---------- 1. Shrinking Hero Status Bar ---------- */
@@ -362,7 +385,7 @@ body {
 }
 
 .panel-zoom-header {
-  cursor: zoom-in;
+  cursor: default;
 }
 
 .panel-header-actions {
@@ -602,9 +625,17 @@ input[type="range"] {
   display: inline-block;
 }
 
-.dot-critical { background-color: var(--critical); }
-.dot-watch { background-color: var(--watch); }
-.dot-safe { background-color: var(--safe); }
+.dot-critical {
+  background-color: var(--critical);
+}
+
+.dot-watch {
+  background-color: var(--watch);
+}
+
+.dot-safe {
+  background-color: var(--safe);
+}
 
 .svg-stage,
 .modal-svg-stage {
@@ -648,6 +679,7 @@ input[type="range"] {
     transform: scale(1);
     opacity: 0.75;
   }
+
   100% {
     transform: scale(1.06);
     opacity: 0;
@@ -694,28 +726,39 @@ input[type="range"] {
 }
 
 @keyframes dispatchAmbulanceBounce {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-1.5px);
   }
 }
 
 @keyframes dispatchSirenRed {
-  0%, 49% {
+
+  0%,
+  49% {
     fill: #B91C1C;
   }
-  50%, 100% {
+
+  50%,
+  100% {
     fill: #FEE2E2;
   }
 }
 
 @keyframes dispatchSirenAmber {
-  0%, 49% {
+
+  0%,
+  49% {
     fill: #FEF3C7;
   }
-  50%, 100% {
+
+  50%,
+  100% {
     fill: #D97706;
   }
 }
@@ -1185,6 +1228,7 @@ input[type="range"] {
     opacity: 0;
     transform: translateY(6px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -1361,6 +1405,7 @@ input[type="range"] {
 
 /* Reduced Motion Accessibility */
 @media (prefers-reduced-motion: reduce) {
+
   .critical-ring-pulse,
   .corridor-flow-edge,
   .transfer-pulse-line,
@@ -1370,6 +1415,7 @@ input[type="range"] {
   .focus-sheet {
     animation: none;
   }
+
   .btn-tactile,
   .hero-bar {
     transition: none;
@@ -1381,9 +1427,11 @@ input[type="range"] {
   .workspace-grid {
     grid-template-columns: 1fr;
   }
+
   .hero-metrics-row {
     grid-template-columns: 1fr;
   }
+
   .stress-body {
     grid-template-columns: 1fr;
   }
@@ -1393,9 +1441,11 @@ input[type="range"] {
   .stock-breakdown-grid {
     grid-template-columns: 1fr;
   }
+
   .pulse-facility-row {
     grid-template-columns: 46px 1fr 64px;
   }
+
   .pulse-bar-track,
   .pulse-buffer {
     display: none;

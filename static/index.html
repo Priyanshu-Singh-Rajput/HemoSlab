@@ -1,20 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="HemoSlab deterministic 6-hospital blood shortage forecast, FEFO allocation network, and clinical audit dashboard." />
   <title>HemoSlab — Regional Blood Shortage &amp; FEFO Allocation Network</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
     href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
-    rel="stylesheet"
-  />
+    rel="stylesheet" />
   <link rel="stylesheet" href="/static/styles.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
   <script src="/static/app.js" defer></script>
 </head>
+
 <body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
   <!-- 1. Shrinking Hero Status Bar -->
   <header id="heroBar" class="hero-bar" role="banner">
     <div class="hero-inner">
@@ -29,17 +33,18 @@
 
         <div class="hero-controls">
           <div class="scenario-group" role="group" aria-label="Clinical Scenario Switcher">
-            <button type="button" class="btn-tactile scenario-btn is-active" data-scenario="baseline">
+            <button type="button" class="btn-tactile scenario-btn is-active" data-scenario="baseline" aria-pressed="true">
               Baseline
             </button>
-            <button type="button" class="btn-tactile scenario-btn" data-scenario="dengue">
+            <button type="button" class="btn-tactile scenario-btn" data-scenario="dengue" aria-pressed="false">
               Monsoon Dengue Surge
             </button>
-            <button type="button" class="btn-tactile scenario-btn" data-scenario="trauma">
+            <button type="button" class="btn-tactile scenario-btn" data-scenario="trauma" aria-pressed="false">
               Highway Trauma Event
             </button>
           </div>
-          <button type="button" id="resetDemoBtn" class="btn-tactile btn-danger-outline" title="Reset SQLite to initial seed state">
+          <button type="button" id="resetDemoBtn" class="btn-tactile btn-danger-outline"
+            title="Reset SQLite to initial seed state">
             Reset Demo
           </button>
         </div>
@@ -76,7 +81,7 @@
     </div>
   </header>
 
-  <main class="main-shell">
+  <main id="main-content" class="main-shell">
     <!-- 2. Collapsible Stress-Test Bar -->
     <section class="slab-card stress-bar" aria-label="Stress-Test Simulator">
       <div class="stress-header">
@@ -100,14 +105,7 @@
             <label for="donationDropSlider">Donation Drop Rate</label>
             <span id="donationDropValue" class="mono slider-readout">0%</span>
           </div>
-          <input
-            type="range"
-            id="donationDropSlider"
-            min="0"
-            max="50"
-            step="5"
-            value="0"
-          />
+          <input type="range" id="donationDropSlider" min="0" max="50" step="5" value="0" />
           <div class="slider-ticks mono">
             <span>0%</span><span>25%</span><span>50%</span>
           </div>
@@ -118,14 +116,7 @@
             <label for="demandMultSlider">Demand Multiplier</label>
             <span id="demandMultValue" class="mono slider-readout">1.0x</span>
           </div>
-          <input
-            type="range"
-            id="demandMultSlider"
-            min="1.0"
-            max="3.0"
-            step="0.1"
-            value="1.0"
-          />
+          <input type="range" id="demandMultSlider" min="1.0" max="3.0" step="0.1" value="1.0" />
           <div class="slider-ticks mono">
             <span>1.0x</span><span>2.0x</span><span>3.0x</span>
           </div>
@@ -134,34 +125,31 @@
     </section>
 
     <!-- Primary Grid: Topology Map + 14-Day Forecast & Facility Matrix -->
-    <section class="workspace-grid">
+    <section class="workspace-grid" aria-label="Network Topology and Hospital Forecast">
       <div class="workspace-left-stack">
         <!-- 3. Interactive Regional Topology Map (Pure SVG) -->
         <article class="slab-card topology-panel">
-          <div class="panel-header panel-zoom-header" data-zoom-header="topology" title="Click header to expand Regional Topology">
+          <div class="panel-header">
             <div>
               <h2>Regional Cold-Chain Topology</h2>
               <p class="panel-caption">Click any facility node to inspect 14-day decay curves &amp; blood group stock</p>
             </div>
             <div class="panel-header-actions">
               <div class="legend-row">
-                <span class="legend-item"><i class="dot dot-critical"></i>Critical &lt;48h</span>
-                <span class="legend-item"><i class="dot dot-watch"></i>Watch 48–120h</span>
-                <span class="legend-item"><i class="dot dot-safe"></i>Safe &gt;120h</span>
+                <span class="legend-item"><i class="dot dot-critical" aria-hidden="true"></i>Critical &lt;48h</span>
+                <span class="legend-item"><i class="dot dot-watch" aria-hidden="true"></i>Watch 48–120h</span>
+                <span class="legend-item"><i class="dot dot-safe" aria-hidden="true"></i>Safe &gt;120h</span>
               </div>
-              <button type="button" class="btn-tactile btn-sm btn-expand" data-zoom-tab="topology" aria-label="Expand Regional Topology">
+              <button type="button" class="btn-tactile btn-sm btn-expand" data-zoom-tab="topology"
+                aria-label="Expand Regional Topology">
                 Expand &#x2922;
               </button>
             </div>
           </div>
 
           <div class="svg-stage">
-            <svg
-              id="topologySvg"
-              viewBox="0 0 800 500"
-              role="img"
-              aria-label="Regional 6-hospital cold-chain topology map"
-            >
+            <svg id="topologySvg" viewBox="0 0 800 500" role="img"
+              aria-label="Regional 6-hospital cold-chain topology map">
               <defs>
                 <pattern id="gridPattern" width="40" height="40" patternUnits="userSpaceOnUse">
                   <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#D5DDD6" stroke-width="1" />
@@ -198,24 +186,28 @@
 
       <!-- 5. 14-Day Forecast Panel (Chart.js) + Selected Hospital Inventory -->
       <article class="slab-card forecast-panel">
-        <div class="panel-header panel-zoom-header" data-zoom-header="forecast" title="Click header to expand 14-Day Forecast">
+        <div class="panel-header">
           <div>
             <h2 id="selectedHospitalTitle">Select a Hospital</h2>
             <p id="selectedHospitalMeta" class="panel-caption">14-day deterministic stock projection</p>
           </div>
           <div class="panel-header-actions">
             <div class="component-tabs" role="tablist" aria-label="Blood Component Selector">
-              <button type="button" class="btn-tactile btn-sm comp-tab is-active" data-component="Platelets">
+              <button type="button" role="tab" aria-selected="true" class="btn-tactile btn-sm comp-tab is-active"
+                data-component="Platelets">
                 Platelets (5d)
               </button>
-              <button type="button" class="btn-tactile btn-sm comp-tab" data-component="RBCs">
+              <button type="button" role="tab" aria-selected="false" class="btn-tactile btn-sm comp-tab"
+                data-component="RBCs">
                 RBCs (42d)
               </button>
-              <button type="button" class="btn-tactile btn-sm comp-tab" data-component="Plasma">
+              <button type="button" role="tab" aria-selected="false" class="btn-tactile btn-sm comp-tab"
+                data-component="Plasma">
                 Plasma (365d)
               </button>
             </div>
-            <button type="button" class="btn-tactile btn-sm btn-expand" data-zoom-tab="forecast" aria-label="Expand 14-Day Forecast">
+            <button type="button" class="btn-tactile btn-sm btn-expand" data-zoom-tab="forecast"
+              aria-label="Expand 14-Day Forecast">
               Expand &#x2922;
             </button>
           </div>
@@ -226,7 +218,7 @@
         </div>
 
         <div class="chart-wrap">
-          <canvas id="forecastChart"></canvas>
+          <canvas id="forecastChart" role="img" aria-label="14-day projected blood stock and expiry chart"></canvas>
         </div>
 
         <div class="stock-breakdown-grid" aria-label="Hospital Stock and Expiry Breakdown Charts">
@@ -236,7 +228,7 @@
               <span id="bloodGroupPieTotal" class="mono mini-chart-meta">--u total</span>
             </div>
             <div class="mini-chart-canvas-wrap">
-              <canvas id="hospitalBloodGroupChart"></canvas>
+              <canvas id="hospitalBloodGroupChart" role="img" aria-label="Selected hospital blood group stock pie chart"></canvas>
             </div>
           </div>
 
@@ -246,22 +238,22 @@
               <span id="expiryGaugeBadge" class="mono mini-chart-meta">--u &le;72h</span>
             </div>
             <div class="mini-chart-canvas-wrap semi-gauge-wrap">
-              <canvas id="hospitalExpirySemiChart"></canvas>
+              <canvas id="hospitalExpirySemiChart" role="img" aria-label="Selected hospital expiry and shelf-life semicircular gauge"></canvas>
               <div id="expiryGaugeReadout" class="semi-gauge-readout mono">--%</div>
             </div>
           </div>
         </div>
 
         <div class="inventory-matrix-wrap">
-          <table class="matrix-table">
+          <table class="matrix-table" aria-label="Selected hospital blood inventory by group">
             <thead>
               <tr>
-                <th>Group</th>
-                <th>Units</th>
-                <th>Burn /d</th>
-                <th>Exp &le;72h</th>
-                <th>Zero-Stock</th>
-                <th>Status</th>
+                <th scope="col">Group</th>
+                <th scope="col">Units</th>
+                <th scope="col">Burn /d</th>
+                <th scope="col">Exp &le;72h</th>
+                <th scope="col">Zero-Stock</th>
+                <th scope="col">Status</th>
               </tr>
             </thead>
             <tbody id="inventoryMatrixBody"></tbody>
@@ -272,14 +264,15 @@
 
     <!-- 4. Proactive 72-Hour Flow & Dispatch Timeline -->
     <section class="slab-card timeline-section" aria-label="72-Hour Flow and FEFO Dispatch Timeline">
-      <div class="panel-header panel-zoom-header" data-zoom-header="timeline" title="Click header to expand 72-Hour Timeline">
+      <div class="panel-header">
         <div>
           <h2>Proactive 72-Hour Flow &amp; FEFO Dispatch Timeline</h2>
           <p class="panel-caption">Chronological shortage windows, imminent batch expiries, and one-click FEFO dispatches</p>
         </div>
         <div class="panel-header-actions">
           <span id="recSummaryPill" class="mono count-pill">0 FEFO plans ready</span>
-          <button type="button" class="btn-tactile btn-sm btn-expand" data-zoom-tab="timeline" aria-label="Expand 72-Hour Timeline">
+          <button type="button" class="btn-tactile btn-sm btn-expand" data-zoom-tab="timeline"
+            aria-label="Expand 72-Hour Timeline">
             Expand &#x2922;
           </button>
         </div>
@@ -295,19 +288,19 @@
       <button type="button" id="drawerToggleBtn" class="drawer-toggle-btn" aria-expanded="false">
         <span class="drawer-title">Audit &amp; Ask</span>
         <span id="drawerContextBadge" class="mono drawer-badge">No Alert Selected</span>
-        <span id="drawerChevron" class="mono drawer-chevron">+</span>
+        <span id="drawerChevron" class="mono drawer-chevron" aria-hidden="true">+</span>
       </button>
     </div>
 
     <div class="drawer-body">
-      <div class="drawer-tabs" role="tablist">
-        <button type="button" class="drawer-tab is-active" data-tab="brief">Structured Brief</button>
-        <button type="button" class="drawer-tab" data-tab="math">Raw Math JSON</button>
-        <button type="button" class="drawer-tab" data-tab="ledger">Audit Ledger</button>
+      <div class="drawer-tabs" role="tablist" aria-label="Audit Drawer Views">
+        <button type="button" role="tab" aria-selected="true" aria-controls="tabBrief" class="drawer-tab is-active" data-tab="brief">Structured Brief</button>
+        <button type="button" role="tab" aria-selected="false" aria-controls="tabMath" class="drawer-tab" data-tab="math">Raw Math JSON</button>
+        <button type="button" role="tab" aria-selected="false" aria-controls="tabLedger" class="drawer-tab" data-tab="ledger">Audit Ledger</button>
       </div>
 
       <!-- Tab 1: Structured Brief -->
-      <div id="tabBrief" class="drawer-panel is-active">
+      <div id="tabBrief" role="tabpanel" class="drawer-panel is-active">
         <div class="brief-meta-row">
           <span id="briefAlertHeadline" class="brief-headline">Select "Inspect Brief" on any alert card.</span>
           <span id="briefSourceBadge" class="mono source-pill">--</span>
@@ -339,12 +332,12 @@
       </div>
 
       <!-- Tab 2: Raw Math JSON -->
-      <div id="tabMath" class="drawer-panel">
+      <div id="tabMath" role="tabpanel" class="drawer-panel">
         <pre id="rawMathPre" class="mono raw-json">Select an alert to inspect deterministic MathEngine inputs.</pre>
       </div>
 
       <!-- Tab 3: Audit Ledger -->
-      <div id="tabLedger" class="drawer-panel">
+      <div id="tabLedger" role="tabpanel" class="drawer-panel">
         <div id="auditLedgerList" class="ledger-list">
           <p class="empty-note">No FEFO transfers dispatched yet in this session.</p>
         </div>
@@ -353,23 +346,27 @@
   </aside>
 
   <!-- 7. Click-to-Zoom Focus Overlay (Stays Above Current Page) -->
-  <div id="focusOverlay" class="focus-overlay is-hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitleLabel">
+  <div id="focusOverlay" class="focus-overlay is-hidden" role="dialog" aria-modal="true"
+    aria-labelledby="modalTitleLabel">
     <div id="focusSheet" class="focus-sheet">
       <div class="focus-header">
         <div class="focus-tabs" role="tablist" aria-label="Zoomed Workspace Views">
-          <button type="button" id="modalTabTopology" class="btn-tactile btn-sm focus-tab is-active" data-modal-tab="topology">
+          <button type="button" role="tab" aria-selected="true" aria-controls="modalPanelTopology" id="modalTabTopology"
+            class="btn-tactile btn-sm focus-tab is-active" data-modal-tab="topology">
             Regional Topology
           </button>
-          <button type="button" id="modalTabForecast" class="btn-tactile btn-sm focus-tab" data-modal-tab="forecast">
+          <button type="button" role="tab" aria-selected="false" aria-controls="modalPanelForecast" id="modalTabForecast"
+            class="btn-tactile btn-sm focus-tab" data-modal-tab="forecast">
             14-Day Forecast &amp; Stock Matrix
           </button>
-          <button type="button" id="modalTabTimeline" class="btn-tactile btn-sm focus-tab" data-modal-tab="timeline">
+          <button type="button" role="tab" aria-selected="false" aria-controls="modalPanelTimeline" id="modalTabTimeline"
+            class="btn-tactile btn-sm focus-tab" data-modal-tab="timeline">
             72-Hour Horizontal Timeline
           </button>
         </div>
 
         <div class="focus-header-right">
-          <span id="modalTitleLabel" class="sr-only">Zoomed Clinical Workspace</span>
+          <h2 id="modalTitleLabel" class="sr-only">Zoomed Clinical Workspace</h2>
           <span id="modalScenarioBadge" class="mono source-pill">Baseline</span>
           <button type="button" id="closeFocusOverlay" class="btn-tactile btn-sm btn-danger-outline">
             Close [Esc] &times;
@@ -379,7 +376,7 @@
 
       <div class="focus-body">
         <!-- Modal Panel 1: Zoomed Regional Topology -->
-        <section id="modalPanelTopology" class="modal-view is-active" aria-label="Zoomed Regional Topology">
+        <section id="modalPanelTopology" role="tabpanel" class="modal-view is-active" aria-label="Zoomed Regional Topology">
           <div class="modal-subbar">
             <div class="modal-subbar-copy">
               <strong>Full-Resolution Cold-Chain Grid</strong>
@@ -387,9 +384,9 @@
             </div>
             <div class="modal-subbar-actions">
               <div class="legend-row">
-                <span class="legend-item"><i class="dot dot-critical"></i>Critical &lt;48h</span>
-                <span class="legend-item"><i class="dot dot-watch"></i>Watch 48–120h</span>
-                <span class="legend-item"><i class="dot dot-safe"></i>Safe &gt;120h</span>
+                <span class="legend-item"><i class="dot dot-critical" aria-hidden="true"></i>Critical &lt;48h</span>
+                <span class="legend-item"><i class="dot dot-watch" aria-hidden="true"></i>Watch 48–120h</span>
+                <span class="legend-item"><i class="dot dot-safe" aria-hidden="true"></i>Safe &gt;120h</span>
               </div>
               <button type="button" id="modalJumpToForecastBtn" class="btn-tactile btn-sm">
                 Inspect Selected Forecast &rarr;
@@ -398,12 +395,8 @@
           </div>
 
           <div id="modalSvgStage" class="modal-svg-stage">
-            <svg
-              id="modalTopologySvg"
-              viewBox="0 0 1040 540"
-              role="img"
-              aria-label="Zoomed 6-hospital cold-chain topology map"
-            >
+            <svg id="modalTopologySvg" viewBox="0 0 1040 540" role="img"
+              aria-label="Zoomed 6-hospital cold-chain topology map">
               <defs>
                 <pattern id="modalGridPattern" width="40" height="40" patternUnits="userSpaceOnUse">
                   <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#D5DDD6" stroke-width="1" />
@@ -419,20 +412,23 @@
         </section>
 
         <!-- Modal Panel 2: Zoomed 14-Day Forecast & Stock Matrix -->
-        <section id="modalPanelForecast" class="modal-view" aria-label="Zoomed 14-Day Forecast and Stock Matrix">
+        <section id="modalPanelForecast" role="tabpanel" class="modal-view" aria-label="Zoomed 14-Day Forecast and Stock Matrix">
           <div class="modal-subbar">
             <div>
               <h3 id="modalForecastTitle" class="modal-heading">Selected Facility</h3>
               <p id="modalForecastMeta" class="panel-caption">14-day deterministic stock projection</p>
             </div>
             <div class="component-tabs" role="tablist" aria-label="Zoomed Blood Component Selector">
-              <button type="button" class="btn-tactile btn-sm modal-comp-tab is-active" data-modal-component="Platelets">
+              <button type="button" role="tab" aria-selected="true" class="btn-tactile btn-sm modal-comp-tab is-active"
+                data-modal-component="Platelets">
                 Platelets (5d)
               </button>
-              <button type="button" class="btn-tactile btn-sm modal-comp-tab" data-modal-component="RBCs">
+              <button type="button" role="tab" aria-selected="false" class="btn-tactile btn-sm modal-comp-tab"
+                data-modal-component="RBCs">
                 RBCs (42d)
               </button>
-              <button type="button" class="btn-tactile btn-sm modal-comp-tab" data-modal-component="Plasma">
+              <button type="button" role="tab" aria-selected="false" class="btn-tactile btn-sm modal-comp-tab"
+                data-modal-component="Plasma">
                 Plasma (365d)
               </button>
             </div>
@@ -443,17 +439,18 @@
           </div>
 
           <div class="modal-chart-wrap">
-            <canvas id="modalChartCanvas"></canvas>
+            <canvas id="modalChartCanvas" role="img" aria-label="Expanded 14-day projected blood stock chart"></canvas>
           </div>
 
-          <div class="stock-breakdown-grid modal-breakdown-grid" aria-label="Zoomed Hospital Stock and Expiry Breakdown Charts">
+          <div class="stock-breakdown-grid modal-breakdown-grid"
+            aria-label="Zoomed Hospital Stock and Expiry Breakdown Charts">
             <div class="mini-chart-card">
               <div class="mini-chart-header">
                 <span class="mini-chart-title">Blood Group Share</span>
                 <span id="modalBloodGroupPieTotal" class="mono mini-chart-meta">--u total</span>
               </div>
               <div class="mini-chart-canvas-wrap">
-                <canvas id="modalBloodGroupChart"></canvas>
+                <canvas id="modalBloodGroupChart" role="img" aria-label="Expanded blood group stock pie chart"></canvas>
               </div>
             </div>
 
@@ -463,23 +460,23 @@
                 <span id="modalExpiryGaugeBadge" class="mono mini-chart-meta">--u &le;72h</span>
               </div>
               <div class="mini-chart-canvas-wrap semi-gauge-wrap">
-                <canvas id="modalExpirySemiChart"></canvas>
+                <canvas id="modalExpirySemiChart" role="img" aria-label="Expanded expiry and shelf-life semicircular gauge"></canvas>
                 <div id="modalExpiryGaugeReadout" class="semi-gauge-readout mono">--%</div>
               </div>
             </div>
           </div>
 
           <div class="inventory-matrix-wrap">
-            <table class="matrix-table">
+            <table class="matrix-table" aria-label="Expanded hospital blood inventory by group">
               <thead>
                 <tr>
-                  <th>Blood Group</th>
-                  <th>On Hand</th>
-                  <th>Daily Burn</th>
-                  <th>Daily Inflow</th>
-                  <th>Exp &le;72h</th>
-                  <th>Zero-Stock</th>
-                  <th>Status</th>
+                  <th scope="col">Blood Group</th>
+                  <th scope="col">On Hand</th>
+                  <th scope="col">Daily Burn</th>
+                  <th scope="col">Daily Inflow</th>
+                  <th scope="col">Exp &le;72h</th>
+                  <th scope="col">Zero-Stock</th>
+                  <th scope="col">Status</th>
                 </tr>
               </thead>
               <tbody id="modalStockTable"></tbody>
@@ -488,35 +485,38 @@
         </section>
 
         <!-- Modal Panel 3: True Horizontal 72-Hour Timeline -->
-        <section id="modalPanelTimeline" class="modal-view" aria-label="Zoomed Horizontal 72-Hour Timeline">
+        <section id="modalPanelTimeline" role="tabpanel" class="modal-view" aria-label="Zoomed Horizontal 72-Hour Timeline">
           <div class="modal-subbar">
             <div class="timeline-filter-group" role="group" aria-label="Filter Timeline Severity">
-              <button type="button" class="btn-tactile btn-sm timeline-filter-btn is-active" data-timeline-filter="all">
+              <button type="button" class="btn-tactile btn-sm timeline-filter-btn is-active" data-timeline-filter="all" aria-pressed="true">
                 All
               </button>
-              <button type="button" class="btn-tactile btn-sm timeline-filter-btn" data-timeline-filter="Critical">
+              <button type="button" class="btn-tactile btn-sm timeline-filter-btn" data-timeline-filter="Critical" aria-pressed="false">
                 Critical
               </button>
-              <button type="button" class="btn-tactile btn-sm timeline-filter-btn" data-timeline-filter="Watch">
+              <button type="button" class="btn-tactile btn-sm timeline-filter-btn" data-timeline-filter="Watch" aria-pressed="false">
                 Watch
               </button>
             </div>
 
             <div class="modal-subbar-actions">
               <span id="modalRecCount" class="mono count-pill">0 FEFO plans ready</span>
-              <button type="button" id="modalTimelinePrev" class="btn-tactile btn-sm mono" aria-label="Scroll timeline left">
+              <button type="button" id="modalTimelinePrev" class="btn-tactile btn-sm mono"
+                aria-label="Scroll timeline left">
                 &larr;
               </button>
-              <button type="button" id="modalTimelineNext" class="btn-tactile btn-sm mono" aria-label="Scroll timeline right">
+              <button type="button" id="modalTimelineNext" class="btn-tactile btn-sm mono"
+                aria-label="Scroll timeline right">
                 &rarr;
               </button>
             </div>
           </div>
 
-          <div id="modalTimelineRail" class="modal-timeline-rail" tabindex="0"></div>
+          <div id="modalTimelineRail" class="modal-timeline-rail" tabindex="0" role="region" aria-label="72-hour dispatch timeline cards"></div>
         </section>
       </div>
     </div>
   </div>
 </body>
+
 </html>
